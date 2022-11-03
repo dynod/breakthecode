@@ -17,6 +17,18 @@ class Number:
     digit: int
     color: Color
 
+    @property
+    def rich_string(self) -> str:
+        if self.color == Color.WHITE:
+            return "bold white"
+        elif self.color == Color.GREEN:
+            return "bold green"
+        else:
+            return "black on white"
+
+    def __repr__(self) -> str:
+        return f"[{self.rich_string}]{self.digit}[/]"
+
 
 # All candidate numbers
 ALL_NUMBERS = [
@@ -43,7 +55,7 @@ ALL_NUMBERS = [
 ]
 
 
-# Candidate solution
+# Candidate solutionblack
 @dataclass
 class Solution:
     numbers: List[Number] = field(default_factory=list)
@@ -53,42 +65,15 @@ class Solution:
         # Sum for this solution
         return sum(n.digit for n in self.numbers)
 
+    def __repr__(self) -> str:
+        return ",".join(map(str, self.numbers))
+
 
 # Constraint for solution
 class Constraint(ABC):
     @abstractmethod
     def verify(self, solution: Solution) -> bool:
         pass
-
-
-# Constraint for total sum value
-class TotalSumConstraint(Constraint):
-    def __init__(self, expected_sum: int):
-        self.expected_sum = expected_sum
-
-    def verify(self, solution: Solution) -> bool:
-        return solution.total_sum == self.expected_sum
-
-
-# Constraint for central sum value
-class CentralSumConstraint(Constraint):
-    def __init__(self, expected_sum: int):
-        self.expected_sum = expected_sum
-
-    def verify(self, solution: Solution) -> bool:
-        return sum(n.digit for n in solution.numbers[1:4]) == self.expected_sum
-
-
-# Constraint for third digit (greater than 4 or net)
-class Digit3Constraint(Constraint):
-    def __init__(self, greater: bool):
-        self.greater = greater
-
-    def verify(self, solution: Solution) -> bool:
-        if self.greater:
-            return solution.numbers[2].digit > 4
-        else:
-            return solution.numbers[2].digit <= 4
 
 
 # Candidate solutions manager
@@ -129,17 +114,3 @@ class SolutionsManager:
                                 matching_solutions.append(solution)
 
         return matching_solutions
-
-
-# Sample run
-my_numbers = [Number(0, Color.BLACK), Number(0, Color.WHITE), Number(3, Color.WHITE), Number(4, Color.BLACK), Number(6, Color.WHITE)]
-guessed_numbers = [Number(5, Color.GREEN)]
-m = SolutionsManager(my_numbers + guessed_numbers)
-s = m.compute(
-    [
-        TotalSumConstraint(22),
-        Digit3Constraint(False),
-        CentralSumConstraint(13),
-    ]
-)
-print(f"Solution candidates count: {len(s)}\n")

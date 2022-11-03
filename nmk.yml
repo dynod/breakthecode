@@ -4,3 +4,18 @@ refs:
 
 config:
     pythonPackage: breakthecode
+
+    pythonPackageRequirements:
+        - rich
+        - argcomplete
+
+    pythonIgnoredRules:
+        - E203
+
+    # Extra setup data
+    pythonSetupItems:
+        metadata:
+            description: BreakTheCode board game helper
+        options.entry_points:
+            console_scripts:
+                - breakthecode = breakthecode.__main__:main
