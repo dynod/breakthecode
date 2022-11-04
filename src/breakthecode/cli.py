@@ -3,7 +3,7 @@ from typing import List
 
 from rich import print
 
-from breakthecode.constraints import ColorConstraint, OddEvenConstraint, PositionConstraint, SumConstraint
+from breakthecode.constraints import ColorConstraint, DiffConstraint, OddEvenConstraint, PositionConstraint, SumConstraint
 from breakthecode.model import ALL_NUMBERS, Color, Number, SolutionsManager
 
 
@@ -138,6 +138,17 @@ class HelperCli:
             help="add a white numbers count constraint",
         )
 
+        # Diff constraint
+        self.parser.add_argument(
+            "--diff",
+            "-d",
+            metavar="D",
+            dest="diff_constraint",
+            type=lambda c: DiffConstraint(int(c)),
+            default=None,
+            help="add a max-min diff constraint",
+        )
+
         # Parse args
         self.args = self.parser.parse_args(argv)
 
@@ -152,7 +163,7 @@ class HelperCli:
                 (
                     self.args.sum_constraints
                     + self.args.pos_constraints
-                    + [self.args.odd_constraint, self.args.even_constraint, self.args.black_constraint, self.args.white_constraint]
+                    + [self.args.odd_constraint, self.args.even_constraint, self.args.black_constraint, self.args.white_constraint, self.args.diff_constraint]
                 ),
             )
         )

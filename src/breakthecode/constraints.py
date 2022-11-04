@@ -42,7 +42,7 @@ class PositionConstraint(Constraint):
         self.position = position
 
     def __repr__(self) -> str:
-        return f"PositionConstraint{self.number, self.position}"
+        return f"PositionConstraint{str(self.number), self.position}"
 
     def verify(self, solution: Solution) -> bool:
         return solution.numbers[self.position] == self.number
@@ -75,3 +75,15 @@ class ColorConstraint(Constraint):
 
     def verify(self, solution: Solution) -> bool:
         return len(list(filter(lambda n: n.color == self.color, solution.numbers))) == self.count
+
+
+# Max-min diff constraint
+class DiffConstraint(Constraint):
+    def __init__(self, diff: int):
+        self.diff = diff
+
+    def __repr__(self) -> str:
+        return f"DiffConstraint({self.diff})"
+
+    def verify(self, solution: Solution) -> bool:
+        return (solution.numbers[-1].digit - solution.numbers[0].digit) == self.diff
