@@ -7,6 +7,18 @@ from breakthecode.constraints import ColorConstraint, DiffConstraint, OddEvenCon
 from breakthecode.model import ALL_NUMBERS, Color, Number, SolutionsManager
 
 
+def color_builder(arg: str) -> Color:
+    if arg.lower() == "w":
+        color = Color.WHITE
+    elif arg.lower() == "b":
+        color = Color.BLACK
+    elif arg.lower() == "g":
+        color = Color.GREEN
+    else:
+        raise ArgumentTypeError("Unknown color: " + arg)
+    return color
+
+
 def number_builder(arg: str) -> Number:
     if len(arg) not in [1, 2]:
         raise ArgumentTypeError("Invalid length for number: " + arg)
@@ -17,10 +29,7 @@ def number_builder(arg: str) -> Number:
     if digit == 5:
         color = Color.GREEN
     elif len(arg) == 2:
-        if arg[1].lower() == "w":
-            color = Color.WHITE
-        elif arg[1].lower() == "b":
-            color = Color.BLACK
+        color = color_builder(arg[1])
     if color is None:
         raise ArgumentTypeError("Invalid color for number: " + arg)
     candidate = Number(digit, color)
@@ -30,15 +39,12 @@ def number_builder(arg: str) -> Number:
 
 
 def sum_constraint_builder(arg: str) -> SumConstraint:
-    digits = []
-    for part in arg.split(","):
-        try:
-            digits.append(int(part))
-        except ValueError:
-            raise ArgumentTypeError("Invalid number: " + part)
-    if len(digits) == 0 or len(digits) > 3:
+    parts = arg.split(",")
+    if len(parts) == 0 or len(parts) > 4:
         raise ArgumentTypeError("Invalid sum spec: " + arg)
-    return SumConstraint(digits[0], digits[1] if len(digits) > 1 else 0, digits[2] if len(digits) > 2 else None)
+    return SumConstraint(
+        int(parts[0]), int(parts[1]) if len(parts) > 1 else 0, int(parts[2]) if len(parts) > 2 else None, color_builder(parts[3]) if len(parts) > 3 else None
+    )
 
 
 def pos_constraint_builder(arg: str) -> PositionConstraint:
@@ -74,12 +80,12 @@ class HelperCli:
         self.parser.add_argument(
             "--sum",
             "-s",
-            metavar="T[,I[,C]]",
+            metavar="T[,I[,L[,C]]]",
             dest="sum_constraints",
             action="append",
             type=sum_constraint_builder,
             default=[],
-            help="add a sum constraint (T=total, I=start, C=count)",
+            help="add a sum constraint (T=total, I=start, L=length, C=color)",
         )
 
         # Digit by position constraint

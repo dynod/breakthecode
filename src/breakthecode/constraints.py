@@ -3,21 +3,23 @@ from breakthecode.model import Color, Constraint, Number, Solution
 
 # Sum constraint
 class SumConstraint(Constraint):
-    def __init__(self, expected_sum: int, start_index: int = 0, digits_count: int = None):
+    def __init__(self, expected_sum: int, start_index: int = 0, digits_count: int = None, color_filter: Color = None):
         self.expected_sum = expected_sum
         self.start_index = start_index
         self.digits_count = digits_count
+        self.color_filter = color_filter
 
     def __repr__(self) -> str:
-        return f"SumConstraint{self.expected_sum, self.start_index, self.digits_count}"
+        return f"SumConstraint{self.expected_sum, self.start_index, self.digits_count, self.color_filter}"
 
     def verify(self, solution: Solution) -> bool:
         return (
             sum(
                 n.digit
-                for n in solution.numbers[
-                    self.start_index : self.start_index + ((len(solution.numbers) + 1) if self.digits_count is None else self.digits_count)
-                ]
+                for n in filter(
+                    lambda n: (self.color_filter is None) or (self.color_filter == n.color),
+                    solution.numbers[self.start_index : self.start_index + ((len(solution.numbers) + 1) if self.digits_count is None else self.digits_count)],
+                )
             )
             == self.expected_sum
         )
