@@ -25,16 +25,19 @@ class SumConstraint(Constraint):
         )
 
 
-# Constraint for third digit (greater than 4 or net)
-class Digit3Constraint(Constraint):
-    def __init__(self, greater: bool):
+# Constraint for digit
+class DigitConstraint(Constraint):
+    def __init__(self, greater: bool, index: int = 2, value: int = 4):
         self.greater = greater
+        self.index = index
+        self.value = value
+
+    def __repr__(self) -> str:
+        return f"DigitConstraint{self.greater, self.index, self.value}"
 
     def verify(self, solution: Solution) -> bool:
-        if self.greater:
-            return solution.numbers[2].digit > 4
-        else:
-            return solution.numbers[2].digit <= 4
+
+        return (solution.numbers[self.index].digit > self.value) if self.greater else (solution.numbers[self.index].digit <= self.value)
 
 
 # Positional constraint
@@ -89,3 +92,19 @@ class DiffConstraint(Constraint):
 
     def verify(self, solution: Solution) -> bool:
         return (solution.numbers[-1].digit - solution.numbers[0].digit) == self.diff
+
+
+# Constraint for digit pairs
+class PairsConstraint(Constraint):
+    def __init__(self, count: int):
+        self.count = count
+
+    def __repr__(self) -> str:
+        return f"PairsConstraint{self.count}"
+
+    def verify(self, solution: Solution) -> bool:
+        pairs_count = 0
+        for i in range(len(solution.numbers) - 1):
+            if solution.numbers[i].digit == solution.numbers[i + 1].digit:
+                pairs_count += 1
+        return pairs_count == self.count

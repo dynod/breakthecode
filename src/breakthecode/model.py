@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List
+from typing import List, Set
 
 
 # Color enum
@@ -28,6 +28,12 @@ class Number:
 
     def __repr__(self) -> str:
         return f"[{self.rich_string}]{self.digit}[/]"
+
+    def __eq__(self, __o: object) -> bool:
+        return isinstance(__o, Number) and (self.digit == __o.digit) and (self.color == __o.color)
+
+    def __hash__(self) -> int:
+        return self.digit + self.color.value * 10
 
 
 # All candidate numbers
@@ -60,20 +66,25 @@ ALL_NUMBERS = [
 class Solution:
     numbers: List[Number] = field(default_factory=list)
 
-    @property
-    def total_sum(self) -> int:
-        # Sum for this solution
-        return sum(n.digit for n in self.numbers)
-
     def __repr__(self) -> str:
         return ",".join(map(str, self.numbers))
+
+    def __eq__(self, __o: object) -> bool:
+        # Check all solution numbers
+        return (
+            isinstance(__o, Solution) and (len(self.numbers) == len(__o.numbers)) and all(self.numbers[i] == __o.numbers[i] for i in range(len(self.numbers)))
+        )
+
+    def __hash__(self) -> int:
+        # Sum all numbers hash
+        return sum(n.__hash__() for n in self.numbers)
 
 
 # Constraint for solution
 class Constraint(ABC):
     @abstractmethod
     def verify(self, solution: Solution) -> bool:
-        pass
+        pass  # pragma: no cover
 
 
 # Candidate solutions manager
@@ -85,14 +96,14 @@ class SolutionsManager:
             self.candidates.remove(non_candidate)
 
     # Return all possible solutions
-    def compute(self, constraints: List[Constraint]) -> List[Solution]:
+    def compute(self, constraints: List[Constraint]) -> Set[Solution]:
         # Only 5 candidates?
         candidates_count = len(self.candidates)
         if candidates_count <= 5:
             return [Solution(self.candidates)]
 
         # Generate solutions
-        matching_solutions = []
+        matching_solutions = set()
         for offset_1 in range(candidates_count - 5 + 1):
             for offset_2 in range(offset_1 + 1, candidates_count - 4 + 1):
                 for offset_3 in range(offset_2 + 1, candidates_count - 3 + 1):
@@ -111,6 +122,6 @@ class SolutionsManager:
 
                             # Verify constraints
                             if all(c.verify(solution) for c in constraints):
-                                matching_solutions.append(solution)
+                                matching_solutions.add(solution)
 
         return matching_solutions

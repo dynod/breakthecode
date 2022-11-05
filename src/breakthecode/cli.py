@@ -3,7 +3,7 @@ from typing import List
 
 from rich import print
 
-from breakthecode.constraints import ColorConstraint, DiffConstraint, OddEvenConstraint, PositionConstraint, SumConstraint
+from breakthecode.constraints import ColorConstraint, DiffConstraint, DigitConstraint, OddEvenConstraint, PairsConstraint, PositionConstraint, SumConstraint
 from breakthecode.model import ALL_NUMBERS, Color, Number, SolutionsManager
 
 
@@ -57,6 +57,20 @@ def pos_constraint_builder(arg: str) -> PositionConstraint:
         return PositionConstraint(number, pos)
     except ValueError:
         raise ArgumentTypeError("Invalid position: " + parts[1])
+
+
+def digit_constraint_builder(arg: str) -> DigitConstraint:
+    if "<=" in arg:
+        parts = arg.split("<=")
+        greater = False
+    elif ">" in arg:
+        parts = arg.split(">")
+        greater = True
+    else:
+        raise ArgumentTypeError("Invalid comparison: " + arg)
+    if len(parts) != 2:
+        raise ArgumentTypeError("Invalid comparison syntax: " + arg)
+    return DigitConstraint(greater, int(parts[0], int(parts[1])))
 
 
 class HelperCli:
@@ -155,6 +169,23 @@ class HelperCli:
             help="add a max-min diff constraint",
         )
 
+        # Digit comparison constraint
+        self.parser.add_argument(
+            "--digit",
+            "-D",
+            metavar="I<=>V",
+            dest="digit_constraints",
+            action="append",
+            type=digit_constraint_builder,
+            default=[],
+            help="add a digit comparison constraint (I=index, V=value)",
+        )
+
+        # Pairs contraint
+        self.parser.add_argument(
+            "--pairs", "-P", metavar="P", dest="pairs_constraint", type=lambda p: PairsConstraint(int(p)), default=None, help="add a pairs count contraint"
+        )
+
         # Parse args
         self.args = self.parser.parse_args(argv)
 
@@ -169,7 +200,15 @@ class HelperCli:
                 (
                     self.args.sum_constraints
                     + self.args.pos_constraints
-                    + [self.args.odd_constraint, self.args.even_constraint, self.args.black_constraint, self.args.white_constraint, self.args.diff_constraint]
+                    + self.args.digit_constraints
+                    + [
+                        self.args.odd_constraint,
+                        self.args.even_constraint,
+                        self.args.black_constraint,
+                        self.args.white_constraint,
+                        self.args.diff_constraint,
+                        self.args.pairs_constraint,
+                    ]
                 ),
             )
         )
@@ -181,4 +220,4 @@ class HelperCli:
         # Print them
         print("\nFound solutions candidates:\n" + "\n".join(map(str, s)) + f"\n\nSolution candidates count: {len(s)}")
 
-        return 0 if len(s) == 1 else 1
+        return 0 if len(s) == 1 else len(s)
