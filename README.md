@@ -3,6 +3,7 @@
 
 [![License: MPL](https://img.shields.io/github/license/zedaav/breakthecode)](https://github.com/zedaav/breakthecode/blob/main/LICENSE)
 [![Checks](https://img.shields.io/github/workflow/status/zedaav/breakthecode/Build/main?label=build%20%26%20u.t.)](https://github.com/zedaav/breakthecode/actions?query=branch%3Amain)
+[![PyPI](https://img.shields.io/pypi/v/breakthecode)](https://pypi.org/project/breakthecode/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 This script lists all the possible solutions to break the code, according to provided constraints.
