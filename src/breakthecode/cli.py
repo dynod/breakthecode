@@ -33,8 +33,7 @@ def number_builder(arg: str) -> Number:
     if color is None:
         raise ArgumentTypeError("Invalid color for number: " + arg)
     candidate = Number(digit, color)
-    if candidate not in ALL_NUMBERS:
-        raise ArgumentTypeError("Unknown number: " + arg)
+    assert candidate in ALL_NUMBERS  # Should never fail, because of above checks
     return candidate
 
 

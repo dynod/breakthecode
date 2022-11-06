@@ -124,7 +124,7 @@ class TestBreakTheCode(TestHelper):
         c.append(PairsConstraint(0))
         s = m.compute(c)
         self.print_solutions(s)
-        assert len(s) == 30
+        assert len(s) == 24
 
         # Check final solution
         assert Solution([Number(1, Color.BLACK), Number(2, Color.BLACK), Number(4, Color.WHITE), Number(7, Color.BLACK), Number(8, Color.WHITE)]) in s
