@@ -18,9 +18,6 @@ config:
     pythonSetupItems:
         metadata:
             description: BreakTheCode board game helper
-            author: David Pochet
-            maintainer: David Pochet
-            url: https://github.com/zedaav/breakthecode
         options.entry_points:
             console_scripts:
                 - breakthecode = breakthecode.__main__:main
