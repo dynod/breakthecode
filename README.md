@@ -7,6 +7,10 @@
 
 This script lists all the possible solutions to break the code, according to provided constraints.
 
+## Install
+
+Easy: **`pip install breakthecode`**
+
 ## Usage
 
 ```
