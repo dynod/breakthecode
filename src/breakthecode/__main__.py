@@ -4,7 +4,7 @@ from typing import List
 from breakthecode.cli import HelperCli
 
 
-def main(args: List[str]) -> int:
+def main(args: List[str] = sys.argv[1:]) -> int:
     return HelperCli(args).run()
 
 
