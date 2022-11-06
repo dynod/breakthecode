@@ -1,6 +1,8 @@
 refs:
     - pip://nmk-python!plugin.yml
     - pip://nmk-vscode!plugin.yml
+    - pip://nmk-github!plugin.yml
+    - github://dynod/workspace/main/shared/shared.yml
 
 config:
     pythonPackage: breakthecode
@@ -16,6 +18,9 @@ config:
     pythonSetupItems:
         metadata:
             description: BreakTheCode board game helper
+            author: David Pochet
+            maintainer: David Pochet
+            url: https://github.com/zedaav/breakthecode
         options.entry_points:
             console_scripts:
                 - breakthecode = breakthecode.__main__:main
