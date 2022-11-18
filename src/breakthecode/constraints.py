@@ -36,7 +36,6 @@ class DigitConstraint(Constraint):
         return f"DigitConstraint{self.greater, self.index, self.value}"
 
     def verify(self, solution: Solution) -> bool:
-
         return (solution.numbers[self.index].digit > self.value) if self.greater else (solution.numbers[self.index].digit <= self.value)
 
 
